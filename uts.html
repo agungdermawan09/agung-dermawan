@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js Activity Manager</title>
+  <!-- menambahkan Vue.js library -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <div class="container">
+  <h1>Jadwal Kegiatan</h1>
+  
+  <!-- memasukan nama aktifitas -->
+  <input type="text" v-model="newActivity" @keyup.enter="addActivity">
+  <button @click="addActivity">Masukan Kegiatan</button>
+  
+  <!-- filter kegiatan -->
+  <div>
+    <button @click="filterCompleted(true)">Tampilkan yang Selesai</button>
+    <button @click="filterCompleted(false)">Tampilkan yang Belum Selesai</button>
+    
+  </div>
+  
+  <!-- menampilkan list kegiatan -->
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Kegiatan</th>
+        <th>Keterangan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(activity, index) in activities" :key="index">
+      <tr v-for="(activity, index) in filteredActivities" :key="index">
+        <td span :class="{ 'completed': activity.completed }">{{ activity.name }}</span> </td>
+        <td>
+            
+            <button  @click="completeActivity(index)">Selesai</button>
+            <button  @click="cancelActivity(index)">Batalkan</button>
+            <button @click="deleteActivity(index)">Hapuss</button>
+        </td>
+      </tr>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    newActivity: '', 
+    activities: [],  
+    showCompleted: null 
+  },
+  methods: {
+    addActivity: function() {
+      if (this.newActivity !== '') {
+        this.activities.push({ name: this.newActivity, completed: false }); // Add the new activity to the list
+        this.newActivity = ''; // Clear the input field
+      }
+    },
+    completeActivity: function(index) {
+      this.activities[index].completed = true; // kegiatan selesai
+    },
+    cancelActivity: function(index) {
+      this.activities[index].completed = false; // membatalkan kegiatan
+    },
+    deleteActivity: function(index) {
+      this.activities.splice(index, 1); // seting menghapus kegiatan dari list
+    },
+    filterCompleted: function(completed) {
+      this.showCompleted = completed; // seting filter
+    }
+  },
+  computed: {
+    filteredActivities: function() {
+      if (this.showCompleted === null) {
+        
+        return this.activities;
+      } else {
+        
+        return this.activities.filter(activity => activity.completed === this.showCompleted);
+      }
+    }
+  }
+});
+</script>
+
+<style>
+.completed {
+  text-decoration: line-through;
+}
+.container{
+  
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 50px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+</body>
+</html>
